@@ -1,0 +1,12 @@
+dockerfile
+FROM openjdk:11-jdk					# Use a Java base image
+RUN apt-get update 
+    \&& apt-get install -y wget 
+    \&& wget https://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.57/bin/apache-tomcat-8.5.57.tar.gz # Download Apache Tomcat
+RUN tar xvzf apache-tomcat-8.5.57.tar.gz		# Extract Apache Tomcat	
+RUN rm apache-tomcat-8.5.57.tar.gz			# Remove the downloaded archive file
+COPY your_app.jar /app/					# Copy the JAR file from local host to the image
+WORKDIR /apache-tomcat-8.5.57/bin			# Set the working directory to Apache Tomcat's bin directory
+CMD ["run"]						# Use CMD to set default arguments for the ENTRYPOINT
+ENTRYPOINT ["./catalina.sh"]     			# Set the entrypoint to start Tomcat and run the JAR file
+								
