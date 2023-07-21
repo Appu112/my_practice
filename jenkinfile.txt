@@ -1,0 +1,19 @@
+node{agent(jenkin slave)
+stages
+  stage(clone)
+	 $ git clone
+  stage(build)
+	 $ mvn clean install
+	 $def image=docker build -t ./target/buildfile-name:$build-num
+	}
+ stage(push)
+	 $ docker run -t image 
+	 $ image.push('latest')
+ stage(scan)
+	 sh 'sonnar-scanner -Dsonar.projectkey\source\host.url\login=token
+ stage(deploy)
+	 $git clone
+	 $azure login access token
+	 $az aks creditantial & subscription
+	 $kubectl apply -f deploy.yam
+
