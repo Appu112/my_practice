@@ -27,25 +27,26 @@ pipeline {
 						jenkinsfile
 						pom.xml
 						Dockerfile
-						sonar-project.properties     			# The SonarQube Scanner will use the rules defined in the sonar-project.properties file to analyze the code and produce a report.
-					$ mvn clean install							#it will first clean the target directory if already exist and then run the install command
-					$ docker login -u <DOCKER_HUB_USERNAME> --password-stdin https://index.docker.io/v1/     #configuring the Docker using docker login username and paswords
-					$ echo "<YOUR_ACCESS_TOKEN>" | docker login -u <DOCKER_HUB_USERNAME> --password-stdin https://index.docker.io/v1/   #withCredentials([string(credentialsId: 'my_token', variable: 'TOKEN')])
-							dockerfile
+						sonar-project.properties     # The SonarQube Scanner will use the rules defined in the sonar-project.properties 										file to analyze the code and produce a report.
+					$ mvn clean install		     #it will first clean the target directory if already exist and then run the install 										command
+					$ docker login -u <DOCKER_HUB_USERNAME> --password-stdin https://index.docker.io/v1/     #configuring the Docker using 																	docker login username and paswords
+					$ echo "<YOUR_ACCESS_TOKEN>" | docker login -u <DOCKER_HUB_USERNAME> --password-stdin https://index.docker.io/v1/   								#withCredentials([string(credentialsId: 'my_token', variable: 'TOKEN')])
+
+                     			dockerfile
 								FROM openjdk:11-jdk							# Use a Java base image
 								RUN apt-get update \
 									&& apt-get install -y wget \
-									&& wget https://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.57/bin/apache-tomcat-8.5.57.tar.gz			# Download Apache Tomcat
+									&& wget https://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.57/bin/apache-tomcat- 										.5.57.tar.gz				# Download Apache Tomcat
 								RUN tar xvzf apache-tomcat-8.5.57.tar.gz	# Extract Apache Tomcat	
-                                RUN rm apache-tomcat-8.5.57.tar.gz			# Remove the downloaded archive file
-								COPY your_app.jar /app/						# Copy the JAR file from local host to the image
-								WORKDIR /apache-tomcat-8.5.57/bin			# Set the working directory to Apache Tomcat's bin directory
-								CMD ["run"]									# Use CMD to set default arguments for the ENTRYPOINT
-								ENTRYPOINT ["./catalina.sh"]     			# Set the entrypoint to start Tomcat and run the JAR file
+                              					RUN rm apache-tomcat-8.5.57.tar.gz		# Remove the downloaded archive file
+								COPY your_app.jar /app/				# Copy the JAR file from local 																		host to the image
+								WORKDIR /apache-tomcat-8.5.57/bin		# Set the working directory to Apache 																Tomcat's bin directory
+								CMD ["run"]					# Use CMD to set default arguments for the 									ENTRYPOINT
+								ENTRYPOINT ["./catalina.sh"]     		# Set the entrypoint to start Tomcat and run the 															JAR file
 								
 						
-					$ docker buid -t myrepo/myproject:$BUILD_NUMBER		# my project image gets build from docker file and build id number is appended to it
-					$ docker run -d myproject:$BUILD_NUMBER				#image get run and container is created
+					$ docker buid -t myrepo/myproject:$BUILD_NUMBER		# my project image gets build from docker file and build id 														number is appended to it
+					$ docker run -d myproject:$BUILD_NUMBER			#image get run and container is created
 				  } 	
 				}
             }
@@ -53,22 +54,22 @@ pipeline {
 		stage('SonarQube Analysis') {
 			steps {
 			
-					sh 'sonar-scanner \											#the project key of the project being analyzed 
-					-Dsonar.projectKey=myproject -Dsonar.sources=src \			#the directory containing the source code in src folder to be analyzed
-					-Dsonar.host.url=http://my-sonarqube-server:9000 \			#opens sonnar server to test code quality
-					-Dsonar.login=mytoken'										#token is used to authenticate with the server.
-																				#result & issues shows directly in the jenkin console output using the SonarQube plugin .
+					sh 'sonar-scanner \						#the project key of the project being analyzed 
+					-Dsonar.projectKey=myproject -Dsonar.sources=src \		#the directory containing the source code in src folder 														to be analyzed
+					-Dsonar.host.url=http://my-sonarqube-server:9000 \		#opens sonnar server to test code quality
+					-Dsonar.login=mytoken'						#token is used to authenticate with the server.
+																													#result & issues shows directly in the jenkin console output using the SonarQube plugin .
             }
         }
         stage('Push to artifactory') {
             steps {
                 script {
 					$ docker login -u \${ARTIFACTORY_USERNAME} -p \${ARTIFACTORY_PASSWORD} ARTIFACTORY_URL
-					$ docker build -t custom-image .															# configuring the Docker daemon to use the Artifactory registry as a registry mirror
+					$ docker build -t custom-image .																	# configuring the Docker daemon to use the Artifactory registry as a registry mirror
 					$ docker tag custom-image ARTIFACTORY_URL/custom-image-repo/custom-image:v1.0
-					$ docker push ARTIFACTORY_URL/custom-image-repo/custom-image:v1.0							#push the image to artifactory syntax:docker push [REGISTRY_HOST:REGISTRY_PORT/]IMAGE_NAME[:TAG/version]
+					$ docker push ARTIFACTORY_URL/custom-image-repo/custom-image:v1.0													#push the image to artifactory syntax:docker push [REGISTRY_HOST:REGISTRY_PORT/]IMAGE_NAME[:TAG/version]
         																									#withCredentials([string(credentialsId: 'my_token', variable: 'TOKEN')]) {
-																												#sh "docker push myrepo/myproject:$BUILD_NUMBER --header 'Authorization: Bearer $TOKEN'"
+																										#sh "docker push myrepo/myproject:$BUILD_NUMBER --header 'Authorization: Bearer $TOKEN'"
                 }
             }
         }
@@ -78,11 +79,11 @@ pipeline {
                 script {
 					#access the AKS cluster by logging into Azure using the Azure CLI and configuring kubectl 
 					$git clone https://github.com/myrepo/myproject.git'
-					$az login --token ACCESS_TOKEN							#To authenticate with Azure using an access token
-					$az account set --subscription="SUBSCRIPTION_ID"		# it will set subscription for account in azure portal 
-					$ az aks create --resource-group <resource-group-name> --name <aks-cluster-name> --node-count <number-of-nodes> --generate-ssh-keys
-					$az aks get credentials resoursegrp myproject-k8s		#create resource grp and gives access to ~/.kube/configurations
-					$kubectl create secret docker-registry SECRET_NAME		# create a secret named for a private Docker repository hosted on Docker Hub & used in deployment.yaml file in spec.template.container.ImagePullSecret:secrete_name
+					$az login --token ACCESS_TOKEN				#To authenticate with Azure using an access token
+					$az account set --subscription="SUBSCRIPTION_ID"	# it will set subscription for account in azure portal 
+					$ az aks create --resource-group <resource-group-name> --name <aks-cluster-name> --node-count <number-of-nodes> --																			generate-ssh-keys
+					$az aks get credentials resoursegrp myproject-k8s	#create resource grp and gives access to ~/.kube/configurations
+					$kubectl create secret docker-registry SECRET_NAME	# create a secret named for a private Docker repository 													hosted on Docker Hub & used in deployment.yaml file in 														spec.template.container.ImagePullSecret:secrete_name
 					$kubectl apply -f myproject-k8s/deployment.yml'
                 }
             }
